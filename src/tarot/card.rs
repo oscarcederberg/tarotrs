@@ -44,7 +44,7 @@ impl TryFrom<u32> for Rank {
             11 => Jack,
             12 => Queen,
             13 => King,
-            _ => return Err("outside of range for Rank")
+            _ => return Err("outside of range for Rank"),
         })
     }
 }
@@ -69,7 +69,7 @@ impl TryFrom<u32> for Suit {
     fn try_from(value: u32) -> Result<Self, Self::Error> {
         use Suit::*;
 
-        Ok (match value {
+        Ok(match value {
             0 => Clubs,
             1 => Diamonds,
             2 => Hearts,
@@ -91,7 +91,7 @@ impl fmt::Display for Card {
 
         match self {
             Major { name } => write!(f, "{name}"),
-            Minor { rank,suit } => write!(f, "{rank} of {suit}"),
+            Minor { rank, suit } => write!(f, "{rank} of {suit}"),
         }
     }
 }

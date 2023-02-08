@@ -46,12 +46,12 @@ impl Deck {
     }
 
     pub fn shuffle(&mut self) {
-        use rand::{thread_rng, seq::SliceRandom};
+        use rand::{seq::SliceRandom, thread_rng};
         self.cards.shuffle(&mut thread_rng())
     }
 
     pub fn overhand(&mut self) {
-        let cut:usize = rand::random::<usize>() % self.cards.len();
+        let cut: usize = rand::random::<usize>() % self.cards.len();
         println!("cut: {cut}");
         for _ in 0..=cut {
             let card = self.cards.pop().unwrap();
