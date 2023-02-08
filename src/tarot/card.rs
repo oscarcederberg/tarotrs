@@ -1,3 +1,6 @@
+use std::fmt;
+use std::fmt::Formatter;
+
 #[derive(Debug)]
 pub enum Rank {
     Ace,
@@ -15,18 +18,10 @@ pub enum Rank {
     King,
 }
 
-#[derive(Debug)]
-pub enum Suit {
-    Diamonds,
-    Clubs,
-    Hearts,
-    Spades,
-}
-
-#[derive(Debug)]
-pub enum Card {
-    Major { name: &'static str },
-    Minor { rank: Rank, suit: Suit },
+impl fmt::Display for Rank {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{self:?}")
+    }
 }
 
 impl TryFrom<u32> for Rank {
@@ -54,6 +49,20 @@ impl TryFrom<u32> for Rank {
     }
 }
 
+#[derive(Debug)]
+pub enum Suit {
+    Clubs,
+    Diamonds,
+    Hearts,
+    Spades,
+}
+
+impl fmt::Display for Suit {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{self:?}")
+    }
+}
+
 impl TryFrom<u32> for Suit {
     type Error = &'static str;
 
@@ -67,5 +76,22 @@ impl TryFrom<u32> for Suit {
             3 => Spades,
             _ => return Err("outside of range for Suit"),
         })
+    }
+}
+
+#[derive(Debug)]
+pub enum Card {
+    Major { name: &'static str },
+    Minor { rank: Rank, suit: Suit },
+}
+
+impl fmt::Display for Card {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        use Card::*;
+
+        match self {
+            Major { name } => write!(f, "{name}"),
+            Minor { rank,suit } => write!(f, "{rank} of {suit}"),
+        }
     }
 }

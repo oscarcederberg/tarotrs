@@ -44,4 +44,9 @@ impl Deck {
 
         Deck { cards }
     }
+
+    pub fn shuffle(&mut self) {
+        use rand::{thread_rng, seq::SliceRandom};
+        self.cards.shuffle(&mut thread_rng())
+    }
 }
