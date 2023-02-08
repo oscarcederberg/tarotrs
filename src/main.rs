@@ -1,3 +1,8 @@
+mod tarot;
+
+use tarot::{Deck, Card};
+
 fn main() {
-    println!("Hello, world!");
+    println!("tarotrs");
+    let mut deck:Deck = Deck::new();
 }
