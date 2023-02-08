@@ -1,8 +1,10 @@
 mod tarot;
 
-use tarot::{Deck, Card};
-
 fn main() {
+    use tarot::deck::Deck;
+
     println!("tarotrs");
-    let mut deck:Deck = Deck::new();
+    let mut deck: Deck = Deck::new();
+
+    println!("{deck:?}");
 }
