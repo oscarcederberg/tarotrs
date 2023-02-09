@@ -1,16 +1,16 @@
+use std::collections::vec_deque::VecDeque;
 use crate::tarot::card::*;
 
 #[derive(Debug)]
 pub struct Deck {
-    pub cards: Vec<Card>,
+    cards: VecDeque<Card>,
 }
 
 impl Deck {
     pub fn new() -> Deck {
         use Card::*;
 
-        let mut cards: Vec<Card> = vec![
-            Major { name: "The Fool" },
+        let mut cards: VecDeque<Card> = VecDeque::from([
             Major { name: "The Magician", },
             Major { name: "The High Priestess", },
             Major { name: "The Empress", },
@@ -31,13 +31,14 @@ impl Deck {
             Major { name: "The Sun" },
             Major { name: "Judgement" },
             Major { name: "The World" },
-        ];
+            Major { name: "The Fool" },
+        ]);
 
-        for suit in 0..4 {
-            for rank in 1..14 {
-                cards.push(Minor {
-                    rank: Rank::try_from(rank).unwrap(),
-                    suit: Suit::try_from(suit).unwrap(),
+        for suit in 0..NUM_SUITS {
+            for rank in (1..=NUM_RANKS).rev() {
+                cards.push_back(Minor {
+                    rank: Rank::try_from(u32::try_from(rank).unwrap()).unwrap(),
+                    suit: Suit::try_from(u32::try_from(suit).unwrap()).unwrap(),
                 });
             }
         }
@@ -45,17 +46,24 @@ impl Deck {
         Deck { cards }
     }
 
+    pub fn take_top_card(&mut self) -> Option<Card> {
+        self.cards.pop_back()
+    }
+
+    pub fn put_at_bottom(&mut self, card: Card) {
+        self.cards.push_front(card);
+    }
+
     pub fn shuffle(&mut self) {
         use rand::{seq::SliceRandom, thread_rng};
-        self.cards.shuffle(&mut thread_rng())
+        self.cards.make_contiguous().shuffle(&mut thread_rng())
     }
 
     pub fn overhand(&mut self) {
         let cut: usize = rand::random::<usize>() % self.cards.len();
-        println!("cut: {cut}");
         for _ in 0..=cut {
-            let card = self.cards.pop().unwrap();
-            self.cards.insert(0, card);
+            let card = self.cards.pop_front().unwrap();
+            self.cards.push_back(card);
         }
     }
 }

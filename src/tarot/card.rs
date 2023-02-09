@@ -1,6 +1,8 @@
 use std::fmt;
 use std::fmt::Formatter;
 
+pub const NUM_RANKS:usize = 14;
+
 #[derive(Debug)]
 pub enum Rank {
     Ace,
@@ -13,7 +15,8 @@ pub enum Rank {
     Eight,
     Nine,
     Ten,
-    Jack,
+    Page,
+    Knight,
     Queen,
     King,
 }
@@ -41,20 +44,23 @@ impl TryFrom<u32> for Rank {
             8 => Eight,
             9 => Nine,
             10 => Ten,
-            11 => Jack,
-            12 => Queen,
-            13 => King,
+            11 => Page,
+            12 => Knight,
+            13 => Queen,
+            14 => King,
             _ => return Err("outside of range for Rank"),
         })
     }
 }
 
+pub const NUM_SUITS:usize = 4;
+
 #[derive(Debug)]
 pub enum Suit {
-    Clubs,
-    Diamonds,
-    Hearts,
-    Spades,
+    Wands,
+    Cups,
+    Swords,
+    Pentacles,
 }
 
 impl fmt::Display for Suit {
@@ -70,10 +76,10 @@ impl TryFrom<u32> for Suit {
         use Suit::*;
 
         Ok(match value {
-            0 => Clubs,
-            1 => Diamonds,
-            2 => Hearts,
-            3 => Spades,
+            0 => Wands,
+            1 => Cups,
+            2 => Swords,
+            3 => Pentacles,
             _ => return Err("outside of range for Suit"),
         })
     }
