@@ -1,4 +1,4 @@
-use std::collections::vec_deque::VecDeque;
+use std::collections::VecDeque;
 use crate::tarot::card::*;
 
 #[derive(Debug)]
@@ -65,5 +65,16 @@ impl Deck {
             let card = self.cards.pop_front().unwrap();
             self.cards.push_back(card);
         }
+    }
+
+    pub fn riffle(&mut self) {
+        let size: usize = self.cards.len();
+        let cut: usize = rand::random::<usize>() % size;
+
+        let left = self.cards.split_off(cut);
+        let mut right = VecDeque::with_capacity(size);
+        std::mem::swap(&mut right, &mut self.cards);
+
+        self.cards = itertools::interleave(right, left).collect();
     }
 }
