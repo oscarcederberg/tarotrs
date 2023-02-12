@@ -2,6 +2,10 @@ pub mod card;
 pub mod spread;
 pub mod deck;
 
+use crate::deck::Deck;
+use serde::{Deserialize, Serialize};
+use toml::de::Error;
+
 #[macro_export]
 macro_rules! enum_try_from {
     (
@@ -34,5 +38,25 @@ macro_rules! enum_try_from {
                 }
             }
         }
+    }
+}
+
+
+#[derive(Serialize, Deserialize)]
+pub struct Instance {
+    pub deck: Deck,
+}
+
+impl Instance {
+    pub fn new() -> Instance {
+        Instance { deck: Deck::new() }
+    }
+
+    pub fn serialize(&self) -> Result<String, toml::ser::Error> {
+        toml::to_string(self)
+    }
+
+    pub fn deserialize(from: &str) -> Result<Instance, Error> {
+        toml::from_str(from)
     }
 }

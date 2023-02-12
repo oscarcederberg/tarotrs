@@ -1,42 +1,61 @@
-mod tarot;
+use std::io;
+use std::io::Write;
+use tarotrs::Instance;
+
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() {
-    use tarot::deck::Deck;
-
     println!("tarotrs ---");
-    let mut deck: Deck = Deck::new();
-    let mut card_1 = deck.take_top_card().unwrap();
-    let mut card_2 = deck.take_top_card().unwrap();
-    let mut card_3 = deck.take_top_card().unwrap();
-    println!("first cards:\n{card_1}\n{card_2}\n{card_3}\n");
-    deck.put_at_bottom(card_1);
-    deck.put_at_bottom(card_2);
-    deck.put_at_bottom(card_3);
+    let mut instance = Instance::new();
+    let mut input = String::new();
 
-    deck.shuffle();
-    card_1 = deck.take_top_card().unwrap();
-    card_2 = deck.take_top_card().unwrap();
-    card_3 = deck.take_top_card().unwrap();
-    println!("first cards:\n{card_1}\n{card_2}\n{card_3}\n");
-    deck.put_at_bottom(card_1);
-    deck.put_at_bottom(card_2);
-    deck.put_at_bottom(card_3);
+    loop {
+        print!("> ");
+        io::stdout().flush().expect("Failed to flush stdout");
+        input.clear();
+        io::stdin().read_line(&mut input).expect("Failed to read stdin");
 
-    deck.overhand();
-    card_1 = deck.take_top_card().unwrap();
-    card_2 = deck.take_top_card().unwrap();
-    card_3 = deck.take_top_card().unwrap();
-    println!("first cards:\n{card_1}\n{card_2}\n{card_3}\n");
-    deck.put_at_bottom(card_1);
-    deck.put_at_bottom(card_2);
-    deck.put_at_bottom(card_3);
-
-    deck.riffle();
-    card_1 = deck.take_top_card().unwrap();
-    card_2 = deck.take_top_card().unwrap();
-    card_3 = deck.take_top_card().unwrap();
-    println!("first cards:\n{card_1}\n{card_2}\n{card_3}\n");
-    deck.put_at_bottom(card_1);
-    deck.put_at_bottom(card_2);
-    deck.put_at_bottom(card_3);
+        match input.trim() {
+            "help" => {
+                println!("tarotrs ({VERSION})\n");
+                println!("pop\t\tview the top card and return it to the bottom of the deckh");
+                println!("peek\t\tview the top card of the deck");
+                println!("shuffle\t\tshuffles the deck randomly");
+                println!("overhand\t\toverhand shuffle the deck");
+                println!("riffle\t\triffle shuffle the deck");
+                println!("exit\t\texits the program");
+            }
+            "pop" => {
+                let card = instance.deck.pop();
+                match card {
+                    Some(card) => {
+                        println!("the top card was {card}.");
+                        instance.deck.put(card);
+                    },
+                    None => println!("the deck is empty.")
+                }
+            }
+            "peek" => {
+                let card = instance.deck.peek();
+                match card {
+                    Some(card) => println!("the top card is {card}."),
+                    None => println!("the deck is empty.")
+                }
+            }
+            "shuffle" => {
+                instance.deck.shuffle();
+                println!("the deck has been shuffled.");
+            }
+            "overhand" => {
+                instance.deck.overhand();
+                println!("the deck has been overhand shuffled.");
+            }
+            "riffle" => {
+                instance.deck.riffle();
+                println!("the deck has been riffle shuffled.");
+            }
+            "exit" => break,
+            _ => println!("invalid input, try typing help.")
+        }
+    }
 }
