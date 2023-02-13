@@ -8,7 +8,7 @@ pub const NUM_SUITS:usize = 4;
 
 enum_try_from! {
     #[repr(u32)]
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(PartialEq, Debug, Serialize, Deserialize)]
     pub enum Rank {
         Ace = 1,
         Two = 2,
@@ -29,7 +29,7 @@ enum_try_from! {
 
 enum_try_from! {
     #[repr(u32)]
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(PartialEq, Debug, Serialize, Deserialize)]
     pub enum Suit {
         Wands = 0,
         Cups = 1,
@@ -38,7 +38,7 @@ enum_try_from! {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum Card {
     Major { order: u32, name: String },

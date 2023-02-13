@@ -41,7 +41,6 @@ macro_rules! enum_try_from {
     }
 }
 
-
 #[derive(Serialize, Deserialize)]
 pub struct Instance {
     pub deck: Deck,
