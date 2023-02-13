@@ -52,31 +52,12 @@ impl Deck {
         self.cards.pop_back()
     }
 
-    pub fn pop_n(&mut self, n: usize) -> Option<Vec<Card>> {
-        if n > self.cards.len() || n == 0 {
-            return None;
-        }
-        let mut cards = Vec::new();
-
-        for _ in 0..n {
-            cards.push(self.pop().unwrap());
-        }
-
-        Some(cards)
-    }
-
     pub fn peek(& self) -> Option<&Card> {
         self.cards.back()
     }
 
     pub fn put(&mut self, card: Card) {
         self.cards.push_front(card);
-    }
-
-    pub fn put_n(&mut self, cards: Vec<Card>) {
-        for card in cards {
-            self.put(card);
-        }
     }
 
     pub fn shuffle(&mut self) {
@@ -163,43 +144,6 @@ mod tests {
         assert_eq!(*(deck.cards.front().unwrap()), Major {
             order: 2, name: String::from("c")
         });
-
-        assert_eq!(deck.cards.len(), size);
-    }
-
-    #[test]
-    fn pop_and_put_n() {
-        let mut deck = new_test_deck();
-        let size = deck.cards.len();
-        let cards = deck.pop_n(size).unwrap();
-
-        assert_eq!(cards, Vec::from([
-            Major {
-                order: 2, name: String::from("c")
-            },
-            Major {
-                order: 1, name: String::from("b")
-            },
-            Major {
-                order: 0, name: String::from("a")
-            },
-        ]));
-
-        assert_eq!(deck.cards.len(), 0);
-
-        deck.put_n(cards);
-
-        assert_eq!(deck.cards, Vec::from([
-            Major {
-                order: 0, name: String::from("a")
-            },
-            Major {
-                order: 1, name: String::from("b")
-            },
-            Major {
-                order: 2, name: String::from("c")
-            },
-        ]));
 
         assert_eq!(deck.cards.len(), size);
     }
