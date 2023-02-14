@@ -4,7 +4,6 @@ pub mod deck;
 
 use crate::deck::Deck;
 use serde::{Deserialize, Serialize};
-use toml::de::Error;
 
 #[macro_export]
 macro_rules! enum_try_from {
@@ -51,11 +50,17 @@ impl Instance {
         Instance { deck: Deck::new() }
     }
 
-    pub fn serialize(&self) -> Result<String, toml::ser::Error> {
-        toml::to_string(self)
+    pub fn serialize(&self) -> Result<String, ()> {
+        match toml::to_string(self) {
+            Ok(text) => Ok(text),
+            Err(_) => Err(()),
+        }
     }
 
-    pub fn deserialize(from: &str) -> Result<Instance, Error> {
-        toml::from_str(from)
+    pub fn deserialize(from: &str) -> Result<Instance, ()> {
+        match toml::from_str(from) {
+            Ok(instance) => Ok(instance),
+            Err(_) => Err(()),
+        }
     }
 }
