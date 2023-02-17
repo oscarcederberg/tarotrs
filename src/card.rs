@@ -39,10 +39,22 @@ enum_try_from! {
 }
 
 #[derive(PartialEq, Debug, Serialize, Deserialize)]
+pub enum Orientation {
+    Upright,
+    Reverse,
+}
+
+#[derive(PartialEq, Debug, Serialize, Deserialize)]
 #[serde(tag = "type")]
-pub enum Card {
+pub enum Arcana {
     Major { order: u32, name: String },
     Minor { rank: Rank, suit: Suit },
+}
+
+#[derive(PartialEq, Debug, Serialize, Deserialize)]
+pub struct Card {
+    pub arcana: Arcana,
+    pub orientation: Orientation,
 }
 
 impl fmt::Display for Rank {
@@ -59,19 +71,57 @@ impl fmt::Display for Suit {
 
 impl fmt::Display for Card {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        use Card::*;
-
-        match self {
-            Major { order, name } => {
+        match &self.arcana {
+            Arcana::Major { order, name } => {
                 let numeral = if *order == 0 {
                     String::from("0")
                 } else {
                     roman::to(i32::try_from(*order).expect("Order outside of range")).unwrap()
                 };
 
-                write!(f, "{numeral} - {name}")
+                if Orientation::Upright == self.orientation {
+                    write!(f, "{numeral} - {name}")
+                } else {
+                    write!(f, "Reversed {numeral} - {name}")
+                }
             },
-            Minor { rank, suit } => write!(f, "{rank} of {suit}"),
+            Arcana::Minor { rank, suit } => {
+                if Orientation::Upright == self.orientation {
+                    write!(f, "{rank} of {suit}")
+                } else {
+                    write!(f, "Reversed {rank} of {suit}")
+                }
+            },
         }
+    }
+}
+
+impl Card {
+    pub fn new(arcana:Arcana) -> Card {
+        Card { arcana: arcana, orientation: Orientation::Upright }
+    }
+
+    pub fn reverse(&mut self) {
+        self.orientation = match self.orientation {
+            Orientation::Upright => Orientation::Reverse,
+            Orientation::Reverse => Orientation::Upright,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn reverse_card() {
+        let mut card = Card {
+            arcana: Arcana::Major { order: 0, name: String::from("a")},
+            orientation: Orientation::Upright,
+        };
+
+        assert_eq!(card.orientation, Orientation::Upright);
+
+        card.reverse();
     }
 }

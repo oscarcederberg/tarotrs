@@ -38,9 +38,9 @@ enum Command {
     Shuffle,
     Overhand,
     Riffle,
-    Reset,
     Save,
     Load,
+    Reset,
     Quit,
     Other
 }
@@ -69,9 +69,9 @@ fn parse_command(text: &String) -> Command {
         "shuffle" => if words.len() == 1 { Shuffle } else { Other },
         "overhand" => if words.len() == 1 { Overhand } else { Other },
         "riffle" => if words.len() == 1 { Riffle } else { Other },
-        "reset" => if words.len() == 1 { Reset } else { Other },
         "save" => if words.len() == 1 { Save } else { Other },
         "load" => if words.len() == 1 { Load } else { Other },
+        "reset" => if words.len() == 1 { Reset } else { Other },
         "quit" | "exit" | "stop" => if words.len() == 1 { Quit } else { Other },
         _ => Other,
     }
@@ -98,21 +98,29 @@ fn main() {
                 println!("shuffle\t\tshuffles the deck randomly");
                 println!("overhand\toverhand shuffle the deck");
                 println!("riffle\t\triffle shuffle the deck");
+                println!("save\t\tsaves the current instance to disk");
+                println!("load\t\tloads an instance from disk");
+                println!("reset\t\tresets the instance");
                 println!("quit\t\texits the program");
             }
             Pop { amount } => {
+                let mut cards = Vec::new();
                 for _ in 0..amount {
                     let card = instance.deck.pop();
                     match card {
                         Some(card) => {
                             println!("the top card was {card}.");
-                            instance.deck.put(card);
+                            cards.push(card);
                         },
                         None => {
                             println!("the deck is empty.");
                             break;
                         }
                     }
+                }
+
+                for card in cards.into_iter() {
+                    instance.deck.put(card);
                 }
             }
             Peek => {
