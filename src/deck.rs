@@ -62,18 +62,7 @@ impl Deck {
         self.cards.push_back(card);
     }
 
-    pub fn overhand(&mut self) {
-        let mut rng = rand::thread_rng();
-        let cut = rng.gen_range(0..self.cards.len());
-        let cards = self.cards.split_off(cut);
-        let insertion = rng.gen_range(0..self.cards.len());
-
-        for card in cards.into_iter().rev() {
-            self.cards.insert(insertion, card);
-        }
-    }
-
-    pub fn shuffle(&mut self) {
+    pub fn random_shuffle(&mut self) {
         use rand::seq::SliceRandom;
         let mut rng = rand::thread_rng();
 
@@ -85,7 +74,18 @@ impl Deck {
         })
     }
 
-    pub fn riffle(&mut self) {
+    pub fn strip_shuffle(&mut self) {
+        let mut rng = rand::thread_rng();
+        let cut = rng.gen_range(0..self.cards.len());
+        let cards = self.cards.split_off(cut);
+        let insertion = rng.gen_range(0..self.cards.len());
+
+        for card in cards.into_iter().rev() {
+            self.cards.insert(insertion, card);
+        }
+    }
+
+    pub fn riffle_shuffle(&mut self) {
         let mut rng = rand::thread_rng();
         let size: usize = self.cards.len();
         let cut: usize = rng.gen_range(0..size);
@@ -169,26 +169,26 @@ mod tests {
     }
 
     #[test]
-    fn shuffle() {
+    fn random_shuffle() {
         let mut deck = Deck::new();
         let size = deck.cards.len();
-        deck.shuffle();
+        deck.random_shuffle();
         assert_eq!(deck.cards.len(), size);
     }
 
     #[test]
-    fn overhand() {
+    fn strip_shuffle() {
         let mut deck = Deck::new();
         let size = deck.cards.len();
-        deck.overhand();
+        deck.strip_shuffle();
         assert_eq!(deck.cards.len(), size);
     }
 
     #[test]
-    fn riffle() {
+    fn riffle_shuffle() {
         let mut deck = Deck::new();
         let size = deck.cards.len();
-        deck.riffle();
+        deck.riffle_shuffle();
         assert_eq!(deck.cards.len(), size);
     }
 }

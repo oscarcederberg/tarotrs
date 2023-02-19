@@ -36,7 +36,7 @@ enum Command {
     Pop {amount: usize},
     Peek,
     Shuffle,
-    Overhand,
+    Strip,
     Riffle,
     Save,
     Load,
@@ -67,7 +67,7 @@ fn parse_command(text: &String) -> Command {
         },
         "peek" => if words.len() == 1 { Peek } else { Other },
         "shuffle" => if words.len() == 1 { Shuffle } else { Other },
-        "overhand" => if words.len() == 1 { Overhand } else { Other },
+        "strip" => if words.len() == 1 { Strip } else { Other },
         "riffle" => if words.len() == 1 { Riffle } else { Other },
         "save" => if words.len() == 1 { Save } else { Other },
         "load" => if words.len() == 1 { Load } else { Other },
@@ -96,8 +96,8 @@ fn main() {
                 println!("pop <n>\t\tview the n top cards");
                 println!("peek\t\tview the top card of the deck");
                 println!("shuffle\t\tshuffles the deck randomly");
-                println!("overhand\toverhand shuffle the deck");
-                println!("riffle\t\triffle shuffle the deck");
+                println!("strip\tstrip shuffles the deck once");
+                println!("riffle\t\triffle shuffles the deck once");
                 println!("save\t\tsaves the current instance to disk");
                 println!("load\t\tloads an instance from disk");
                 println!("reset\t\tresets the instance");
@@ -131,16 +131,16 @@ fn main() {
                 }
             }
             Shuffle => {
-                instance.deck.shuffle();
-                println!("the deck has been shuffled.");
+                instance.deck.random_shuffle();
+                println!("the deck has been totally shuffled.");
             }
-            Overhand => {
-                instance.deck.overhand();
-                println!("the deck has been overhand shuffled.");
+            Strip => {
+                instance.deck.strip_shuffle();
+                println!("the deck has been strip shuffled once.");
             }
             Riffle => {
-                instance.deck.riffle();
-                println!("the deck has been riffle shuffled.");
+                instance.deck.riffle_shuffle();
+                println!("the deck has been riffle shuffled once.");
             }
             Reset => {
                 instance= Instance::new();
