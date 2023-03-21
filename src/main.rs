@@ -9,8 +9,9 @@ use std::path::PathBuf;
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn load_instance() -> Result<Instance, ()> {
-    let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/tarotrs/"));
-    file_path.push("instance.toml");
+    let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/"));
+    file_path.push("tarotrs/instance.toml");
+    println!("loading from {}...", file_path.display());
     match fs::read_to_string(file_path) {
         Ok(contents) => Instance::deserialize(contents.as_str()),
         Err(_) => Err(()),
@@ -18,9 +19,11 @@ fn load_instance() -> Result<Instance, ()> {
 }
 
 fn save_instance(instance: &Instance) -> Result<(), ()> {
-    let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/tarotrs/"));
+    let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/"));
+    file_path.push("tarotrs/");
     fs::create_dir_all(&file_path).unwrap();
     file_path.push("instance.toml");
+    println!("saving to {}...", file_path.display());
 
     let serialized = instance.serialize()?;
 
