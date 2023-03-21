@@ -1,7 +1,6 @@
 use crate::card::*;
 use std::collections::vec_deque::VecDeque;
 use rand::Rng;
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Deck {
@@ -10,6 +9,8 @@ pub struct Deck {
 
 impl Deck {
     pub fn new() -> Deck {
+        use strum::EnumCount;
+
         let mut cards: VecDeque<Card> = VecDeque::from([
             Card::new(Arcana::Major { order: 1, name: "The Magician".to_string() }),
             Card::new(Arcana::Major { order: 2, name: "The High Priestess".to_string() }),
@@ -35,11 +36,11 @@ impl Deck {
             Card::new(Arcana::Major { order: 0, name: "The Fool".to_string() }),
         ]);
 
-        for suit in 0..NUM_SUITS {
-            for rank in (1..=NUM_RANKS).rev() {
+        for suit in 0..Suit::COUNT {
+            for rank in (1..=Suit::COUNT).rev() {
                 cards.push_back(Card::new(Arcana::Minor {
-                    rank: Rank::try_from(u32::try_from(rank).unwrap()).unwrap(),
-                    suit: Suit::try_from(u32::try_from(suit).unwrap()).unwrap(),
+                    rank: Rank::from_repr(rank).unwrap(),
+                    suit: Suit::from_repr(suit).unwrap(),
                 }));
             }
         }

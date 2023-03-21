@@ -1,57 +1,46 @@
-use crate::enum_try_from;
 use std::fmt;
 use std::fmt::Formatter;
-use serde::{Deserialize, Serialize};
 
-pub const NUM_RANKS:usize = 14;
-pub const NUM_SUITS:usize = 4;
-
-enum_try_from! {
-    #[repr(u32)]
-    #[derive(PartialEq, Debug, Serialize, Deserialize)]
-    pub enum Rank {
-        Ace = 1,
-        Two = 2,
-        Three = 3,
-        Four = 4,
-        Five = 5,
-        Six = 6,
-        Seven = 7,
-        Eight = 8,
-        Nine = 9,
-        Ten = 10,
-        Page = 11,
-        Knight = 12,
-        Queen = 13,
-        King = 14,
-    }
+#[derive(PartialEq, Eq, Debug, Serialize, Deserialize, EnumCount, FromRepr)]
+pub enum Rank {
+    Ace = 1,
+    Two,
+    Three,
+    Four,
+    Five,
+    Six,
+    Seven,
+    Eight,
+    Nine,
+    Ten,
+    Page,
+    Knight,
+    Queen,
+    King,
 }
 
-enum_try_from! {
-    #[repr(u32)]
-    #[derive(PartialEq, Debug, Serialize, Deserialize)]
-    pub enum Suit {
-        Wands = 0,
-        Cups = 1,
-        Swords = 2,
-        Pentacles = 3,
-    }
+#[derive(PartialEq, Eq, Debug, Serialize, Deserialize, EnumCount, FromRepr)]
+pub enum Suit {
+    Wands = 0,
+    Cups,
+    Swords,
+    Pentacles,
 }
 
-#[derive(PartialEq, Debug, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub enum Orientation {
     Upright,
     Reverse,
 }
 
-#[derive(PartialEq, Debug, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum Arcana {
     Major { order: u32, name: String },
     Minor { rank: Rank, suit: Suit },
 }
 
-#[derive(PartialEq, Debug, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub struct Card {
     pub arcana: Arcana,
     pub orientation: Orientation,

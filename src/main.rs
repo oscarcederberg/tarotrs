@@ -96,7 +96,7 @@ fn main() {
                 println!("pop <n>\t\tview the n top cards");
                 println!("peek\t\tview the top card of the deck");
                 println!("shuffle\t\tshuffles the deck randomly");
-                println!("strip\tstrip shuffles the deck once");
+                println!("strip\t\tstrip shuffles the deck once");
                 println!("riffle\t\triffle shuffles the deck once");
                 println!("save\t\tsaves the current instance to disk");
                 println!("load\t\tloads an instance from disk");

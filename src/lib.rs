@@ -2,8 +2,13 @@ pub mod card;
 pub mod spread;
 pub mod deck;
 
+extern crate strum;
+#[macro_use]
+extern crate strum_macros;
+#[macro_use]
+extern crate serde;
+
 use crate::deck::Deck;
-use serde::{Deserialize, Serialize};
 
 #[macro_export]
 macro_rules! enum_try_from {
