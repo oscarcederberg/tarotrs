@@ -1,6 +1,6 @@
 use crate::card::*;
-use std::collections::vec_deque::VecDeque;
 use rand::Rng;
+use std::collections::vec_deque::VecDeque;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Deck {
@@ -12,28 +12,94 @@ impl Deck {
         use strum::EnumCount;
 
         let mut cards: VecDeque<Card> = VecDeque::from([
-            Card::new(Arcana::Major { order: 1, name: "The Magician".to_string() }),
-            Card::new(Arcana::Major { order: 2, name: "The High Priestess".to_string() }),
-            Card::new(Arcana::Major { order: 3, name: "The Empress".to_string() }),
-            Card::new(Arcana::Major { order: 4, name: "The Emperor".to_string() }),
-            Card::new(Arcana::Major { order: 5, name: "The Hierophant".to_string() }),
-            Card::new(Arcana::Major { order: 6, name: "The Lovers".to_string() }),
-            Card::new(Arcana::Major { order: 7, name: "The Chariot".to_string() }),
-            Card::new(Arcana::Major { order: 8, name: "Strength".to_string() }),
-            Card::new(Arcana::Major { order: 9, name: "The Hermit".to_string() }),
-            Card::new(Arcana::Major { order: 10, name: "The Wheel of Fortune".to_string() }),
-            Card::new(Arcana::Major { order: 11, name: "Justice".to_string() }),
-            Card::new(Arcana::Major { order: 12, name: "The Hanged Man".to_string() }),
-            Card::new(Arcana::Major { order: 13, name: "Death".to_string() }),
-            Card::new(Arcana::Major { order: 14, name: "Temperance".to_string() }),
-            Card::new(Arcana::Major { order: 15, name: "The Devil".to_string() }),
-            Card::new(Arcana::Major { order: 16, name: "The Tower".to_string() }),
-            Card::new(Arcana::Major { order: 17, name: "The Star".to_string() }),
-            Card::new(Arcana::Major { order: 18, name: "The Moon".to_string() }),
-            Card::new(Arcana::Major { order: 19, name: "The Sun".to_string() }),
-            Card::new(Arcana::Major { order: 20, name: "Judgement".to_string() }),
-            Card::new(Arcana::Major { order: 21, name: "The World".to_string() }),
-            Card::new(Arcana::Major { order: 0, name: "The Fool".to_string() }),
+            Card::new(Arcana::Major {
+                order: 1,
+                name: "The Magician".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 2,
+                name: "The High Priestess".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 3,
+                name: "The Empress".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 4,
+                name: "The Emperor".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 5,
+                name: "The Hierophant".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 6,
+                name: "The Lovers".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 7,
+                name: "The Chariot".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 8,
+                name: "Strength".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 9,
+                name: "The Hermit".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 10,
+                name: "The Wheel of Fortune".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 11,
+                name: "Justice".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 12,
+                name: "The Hanged Man".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 13,
+                name: "Death".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 14,
+                name: "Temperance".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 15,
+                name: "The Devil".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 16,
+                name: "The Tower".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 17,
+                name: "The Star".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 18,
+                name: "The Moon".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 19,
+                name: "The Sun".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 20,
+                name: "Judgement".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 21,
+                name: "The World".to_string(),
+            }),
+            Card::new(Arcana::Major {
+                order: 0,
+                name: "The Fool".to_string(),
+            }),
         ]);
 
         for suit in 0..Suit::COUNT {
@@ -55,7 +121,7 @@ impl Deck {
         self.cards.pop_front()
     }
 
-    pub fn peek(& self) -> Option<&Card> {
+    pub fn peek(&self) -> Option<&Card> {
         self.cards.front()
     }
 
@@ -107,6 +173,12 @@ impl Deck {
     }
 }
 
+impl Default for Deck {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -115,15 +187,18 @@ mod tests {
         Deck {
             cards: VecDeque::from([
                 Card::new(Arcana::Major {
-                    order: 0, name: String::from("a")
+                    order: 0,
+                    name: String::from("a"),
                 }),
                 Card::new(Arcana::Major {
-                    order: 1, name: String::from("b")
+                    order: 1,
+                    name: String::from("b"),
                 }),
                 Card::new(Arcana::Major {
-                    order: 2, name: String::from("c")
-                })
-            ])
+                    order: 2,
+                    name: String::from("c"),
+                }),
+            ]),
         }
     }
 
@@ -133,13 +208,21 @@ mod tests {
         let size = deck.cards.len();
         let card = deck.peek().unwrap();
 
-        assert_eq!(*card, Card::new(Arcana::Major {
-            order: 0, name: String::from("a")
-        }));
+        assert_eq!(
+            *card,
+            Card::new(Arcana::Major {
+                order: 0,
+                name: String::from("a")
+            })
+        );
 
-        assert_eq!(*(deck.cards.front().unwrap()), Card::new(Arcana::Major {
-            order: 0, name: String::from("a")
-        }));
+        assert_eq!(
+            *(deck.cards.front().unwrap()),
+            Card::new(Arcana::Major {
+                order: 0,
+                name: String::from("a")
+            })
+        );
 
         assert_eq!(deck.cards.len(), size);
     }
@@ -150,21 +233,33 @@ mod tests {
         let size = deck.cards.len();
         let card = deck.pop().unwrap();
 
-        assert_eq!(card, Card::new(Arcana::Major {
-            order: 0, name: String::from("a")
-        }));
+        assert_eq!(
+            card,
+            Card::new(Arcana::Major {
+                order: 0,
+                name: String::from("a")
+            })
+        );
 
-        assert_eq!(*(deck.peek().unwrap()), Card::new(Arcana::Major {
-            order: 1, name: String::from("b")
-        }));
+        assert_eq!(
+            *(deck.peek().unwrap()),
+            Card::new(Arcana::Major {
+                order: 1,
+                name: String::from("b")
+            })
+        );
 
         assert_eq!(deck.cards.len(), size - 1);
 
         deck.put(card);
 
-        assert_eq!(*(deck.cards.front().unwrap()), Card::new(Arcana::Major {
-            order: 1, name: String::from("b")
-        }));
+        assert_eq!(
+            *(deck.cards.front().unwrap()),
+            Card::new(Arcana::Major {
+                order: 1,
+                name: String::from("b")
+            })
+        );
 
         assert_eq!(deck.cards.len(), size);
     }
