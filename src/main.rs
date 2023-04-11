@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::fs;
 use std::fs::File;
 use std::io::Write;
@@ -58,17 +59,12 @@ fn main() {
     use Command::*;
 
     let mut siv = cursive::default();
-    let _instance = Instance::new();
+    let instance = RefCell::new(Instance::default());
     let action_select = SelectView::new()
         .item("pull top card", Pop)
         .item("peek top card", Peek)
         .item("quit", Quit)
-        .on_submit(|siv, selected| match selected {
-            Pop => {}
-            Peek => {}
-            Quit => Cursive::quit(siv),
-            _ => (),
-        });
+        .on_submit(move |siv, selected| perform_action(siv, selected, &mut instance.borrow_mut()));
 
     siv.add_layer(
         Dialog::around(
@@ -81,4 +77,8 @@ fn main() {
     );
 
     siv.run();
+}
+
+fn perform_action(siv: &mut Cursive, selected: &Command, instance: &mut Instance) {
+    // do something with `instance` based on `selected` and show with `siv`
 }
