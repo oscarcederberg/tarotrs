@@ -8,6 +8,7 @@ use cursive::theme::Style;
 use cursive::views::{Dialog, DummyView, LinearLayout, SelectView, TextView};
 use cursive::Cursive;
 use tarotrs::Instance;
+use tarotrs::card::Card;
 
 #[allow(dead_code)]
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -80,5 +81,25 @@ fn main() {
 }
 
 fn perform_action(siv: &mut Cursive, selected: &Command, instance: &mut Instance) {
-    // do something with `instance` based on `selected` and show with `siv`
+    use Command::*;
+
+    match selected {
+        Pop => {
+            let card = instance.deck.pop().unwrap();
+            siv.add_layer(Dialog::text(format!("you pulled\nThe {}", card))
+                .title("pop")
+                .button("OK", |siv| { siv.pop_layer(); }));
+            instance.deck.put(card);
+        },
+        Peek => {
+            let card = instance.deck.peek().unwrap();
+            siv.add_layer(Dialog::text(format!("the top card is\nThe {}", card))
+                .title("peek")
+                .button("OK", |siv| { siv.pop_layer(); }));
+        },
+        Quit => {
+            siv.quit();
+        },
+        _ => {},
+    }
 }
