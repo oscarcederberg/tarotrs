@@ -3,12 +3,13 @@ use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
+use std::rc::Rc;
 
 use cursive::theme::Style;
 use cursive::views::{Dialog, DummyView, LinearLayout, SelectView, TextView};
 use cursive::Cursive;
 use tarotrs::Instance;
-use tarotrs::card::Card;
+use tarotrs::deck::Deck;
 
 #[allow(dead_code)]
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -43,29 +44,27 @@ fn save_instance(instance: &Instance) -> Result<(), toml::ser::Error> {
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
 enum Command {
-    Help,
     Pop,
     Peek,
     Shuffle,
-    Strip,
-    Riffle,
-    Save,
-    Load,
     Reset,
     Quit,
-    Other,
 }
 
 fn main() {
     use Command::*;
 
     let mut siv = cursive::default();
-    let instance = RefCell::new(Instance::default());
+    let instance = Rc::new(RefCell::new(
+        load_instance().unwrap_or(Instance::default())
+    ));
     let action_select = SelectView::new()
         .item("pull top card", Pop)
         .item("peek top card", Peek)
+        .item("shuffle the deck", Shuffle)
+        .item("reset the deck", Reset)
         .item("quit", Quit)
-        .on_submit(move |siv, selected| perform_action(siv, selected, &mut instance.borrow_mut()));
+        .on_submit(move |siv, selected| perform_action(siv, selected, Rc::clone(&instance)));
 
     siv.add_layer(
         Dialog::around(
@@ -80,26 +79,57 @@ fn main() {
     siv.run();
 }
 
-fn perform_action(siv: &mut Cursive, selected: &Command, instance: &mut Instance) {
+fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<Instance>>) {
     use Command::*;
 
     match selected {
         Pop => {
+            let mut instance = instance.borrow_mut();
             let card = instance.deck.pop().unwrap();
-            siv.add_layer(Dialog::text(format!("you pulled\nThe {}", card))
+            siv.add_layer(Dialog::text(format!("you pulled\nThe {card}"))
                 .title("pop")
                 .button("OK", |siv| { siv.pop_layer(); }));
             instance.deck.put(card);
         },
         Peek => {
+            let instance = instance.borrow_mut();
             let card = instance.deck.peek().unwrap();
-            siv.add_layer(Dialog::text(format!("the top card is\nThe {}", card))
+            siv.add_layer(Dialog::text(format!("the top card is\nThe {card}"))
                 .title("peek")
                 .button("OK", |siv| { siv.pop_layer(); }));
         },
+        Shuffle => {
+            siv.add_layer(Dialog::text("shuffle the deck")
+                .title("shuffle")
+                .button("random", {
+                    let instance = instance.clone();
+                    move |_siv| { instance.borrow_mut().deck.random_shuffle(); }
+                })
+                .button("strip", {
+                    let instance = instance.clone();
+                    move |_siv| { instance.borrow_mut().deck.strip_shuffle(); }
+                })
+                .button("riffle", {
+                    let instance = instance.clone();
+                    move |_siv| { instance.borrow_mut().deck.riffle_shuffle(); }
+                })
+                .button("done", |siv| { siv.pop_layer(); }));
+        }
+        Reset => {
+            instance.borrow_mut().deck = Deck::default();
+            siv.add_layer(Dialog::text("the deck has been reset")
+                .title("reset")
+                .button("OK", |siv| { siv.pop_layer(); }));
+        }
         Quit => {
-            siv.quit();
+            match save_instance(&instance.borrow_mut()) {
+                Ok(_) => siv.quit(),
+                Err(_) => {
+                    siv.add_layer(Dialog::text("unable to save instance to file")
+                        .title("warning")
+                        .button("OK", Cursive::quit));
+                }
+            }
         },
-        _ => {},
     }
 }
