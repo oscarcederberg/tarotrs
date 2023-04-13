@@ -103,7 +103,11 @@ impl Deck {
             right.iter_mut().for_each(|card| card.reverse());
         }
 
-        self.cards = itertools::interleave(right, left).collect();
+        if rng.gen_bool(0.5) {
+            self.cards = itertools::interleave(right, left).collect();
+        } else {
+            self.cards = itertools::interleave(left, right).collect();
+        }
     }
 }
 
