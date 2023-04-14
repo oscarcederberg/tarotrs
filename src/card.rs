@@ -87,7 +87,7 @@ impl fmt::Display for Card {
 
 impl Card {
     pub fn new(arcana:Arcana) -> Card {
-        Card { arcana: arcana, orientation: Orientation::Upright }
+        Card { arcana, orientation: Orientation::Upright }
     }
 
     pub fn reverse(&mut self) {

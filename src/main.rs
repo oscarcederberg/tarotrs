@@ -49,7 +49,7 @@ enum Command {
 }
 
 fn parse_command(text: &String) -> Command {
-    let words: Vec<&str> = text.trim().split_whitespace().collect();
+    let words: Vec<&str> = text.split_whitespace().collect();
 
     if words.is_empty() {
         return Other;
@@ -62,7 +62,7 @@ fn parse_command(text: &String) -> Command {
                 return Other;
             }
 
-            match words.get(1).unwrap_or(&&"1").parse::<usize>() {
+            match words.get(1).unwrap_or(&"1").parse::<usize>() {
                 Ok(0) => Other,
                 Ok(amount) => Pop{ amount },
                 _ => Other,
