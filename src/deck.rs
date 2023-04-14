@@ -37,7 +37,7 @@ impl Deck {
         ]);
 
         for suit in 0..Suit::COUNT {
-            for rank in (1..=Suit::COUNT).rev() {
+            for rank in (1..=Rank::COUNT).rev() {
                 cards.push_back(Card::new(Arcana::Minor {
                     rank: Rank::from_repr(rank).unwrap(),
                     suit: Suit::from_repr(suit).unwrap(),
