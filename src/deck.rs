@@ -142,15 +142,13 @@ impl Deck {
     }
 
     pub fn strip_shuffle(&mut self) {
-        if self.cards.len() == 0 {
+        if self.cards.is_empty() {
             return;
         }
 
         let mut rng = rand::thread_rng();
-        let size = self.cards.len();
         let cut = rng.gen_range(0..(self.cards.len() / 2));
         let cards = self.cards.split_off(self.cards.len() - cut);
-        let size = self.cards.len();
         let insertion = rng.gen_range(0..=self.cards.len());
 
         for card in cards.into_iter().rev() {
@@ -159,7 +157,7 @@ impl Deck {
     }
 
     pub fn riffle_shuffle(&mut self) {
-        if self.cards.len() == 0 {
+        if self.cards.is_empty() {
             return;
         }
 
