@@ -37,7 +37,7 @@ impl Deck {
         Deck { cards }
     }
 
-    pub fn pop(&mut self) -> Option<Card> {
+    pub fn draw(&mut self) -> Option<Card> {
         self.cards.pop_front()
     }
 
@@ -160,10 +160,10 @@ mod tests {
     }
 
     #[test]
-    fn pop_and_put() {
+    fn draw_and_put() {
         let mut deck = new_test_deck();
         let size = deck.cards.len();
-        let card = deck.pop().unwrap();
+        let card = deck.draw().unwrap();
 
         assert_eq!(
             card,

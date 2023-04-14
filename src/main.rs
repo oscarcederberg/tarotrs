@@ -27,7 +27,6 @@ fn save_instance(instance: &Instance) -> Result<(), toml::ser::Error> {
     file_path.push("tarotrs/");
     fs::create_dir_all(&file_path).unwrap();
     file_path.push("instance.toml");
-    println!("saving to {}...", file_path.display());
 
     let serialized = instance.serialize()?;
 
@@ -40,7 +39,7 @@ fn save_instance(instance: &Instance) -> Result<(), toml::ser::Error> {
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
 enum Command {
-    Pop,
+    Draw,
     Peek,
     Shuffle,
     Reset,
@@ -53,7 +52,7 @@ fn main() {
     let mut siv = cursive::default();
     let instance = Rc::new(RefCell::new(load_instance().unwrap_or(Instance::new())));
     let action_select = SelectView::new()
-        .item("pull top card", Pop)
+        .item("draw top card", Draw)
         .item("peek top card", Peek)
         .item("shuffle the deck", Shuffle)
         .item("reset the deck", Reset)
@@ -77,28 +76,16 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<In
     use Command::*;
 
     match selected {
-        Pop => {
+        Draw => {
             let mut instance = instance.borrow_mut();
-            let card = instance.deck.pop().unwrap();
-            siv.add_layer(
-                Dialog::text(format!("you pulled\nThe {card}"))
-                    .title("pop")
-                    .button("OK", |siv| {
-                        siv.pop_layer();
-                    }),
-            );
+            let card = instance.deck.draw().unwrap();
+            show_popup(siv, "draw".to_owned(), format!("you drew\nThe {card}"));
             instance.deck.put(card);
         }
         Peek => {
             let instance = instance.borrow_mut();
             let card = instance.deck.peek().unwrap();
-            siv.add_layer(
-                Dialog::text(format!("the top card is\nThe {card}"))
-                    .title("peek")
-                    .button("OK", |siv| {
-                        siv.pop_layer();
-                    }),
-            );
+            show_popup(siv, "peek".to_owned(), format!("the top card is\nThe {card}"));
         }
         Shuffle => {
             siv.add_layer(
@@ -126,13 +113,7 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<In
         }
         Reset => {
             instance.borrow_mut().deck = Deck::default();
-            siv.add_layer(
-                Dialog::text("the deck has been reset")
-                    .title("reset")
-                    .button("OK", |siv| {
-                        siv.pop_layer();
-                    }),
-            );
+            show_popup(siv, "reset".to_owned(), "the deck has been reset".to_owned());
         }
         Quit => match save_instance(&instance.borrow_mut()) {
             Ok(_) => siv.quit(),
@@ -145,4 +126,14 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<In
             }
         },
     }
+}
+
+fn show_popup(siv: &mut Cursive, title: String, text: String) {
+    siv.add_layer(
+        Dialog::text(text)
+            .title(title)
+            .button("OK", |siv| {
+                siv.pop_layer();
+            }),
+    );
 }
