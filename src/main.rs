@@ -11,21 +11,17 @@ use cursive::Cursive;
 use tarotrs::deck::Deck;
 use tarotrs::Instance;
 
-#[allow(dead_code)]
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-#[allow(dead_code)]
 fn load_instance() -> Result<Instance, toml::de::Error> {
     let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/"));
     file_path.push("tarotrs/instance.toml");
-    println!("loading from {}...", file_path.display());
     match fs::read_to_string(file_path) {
         Ok(contents) => Instance::deserialize(contents.as_str()),
         Err(_) => panic!("couldn't load instance"),
     }
 }
 
-#[allow(dead_code)]
 fn save_instance(instance: &Instance) -> Result<(), toml::ser::Error> {
     let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/"));
     file_path.push("tarotrs/");
