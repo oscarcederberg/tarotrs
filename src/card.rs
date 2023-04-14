@@ -1,6 +1,31 @@
 use std::fmt;
 use std::fmt::Formatter;
 
+pub const MAJOR_ARCANA_NAMES: &[&str] = &[
+    "The Fool",
+    "The Magician",
+    "The High Priestess",
+    "The Empress",
+    "The Emperor",
+    "The Hierophant",
+    "The Lovers",
+    "The Chariot",
+    "Strength",
+    "The Hermit",
+    "The Wheel of Fortune",
+    "Justice",
+    "The Hanged Man",
+    "Death",
+    "Temperance",
+    "The Devil",
+    "The Tower",
+    "The Star",
+    "The Moon",
+    "The Sun",
+    "Judgement",
+    "The World",
+];
+
 #[derive(PartialEq, Eq, Debug, Serialize, Deserialize, EnumCount, FromRepr)]
 pub enum Rank {
     Ace = 1,
@@ -73,21 +98,24 @@ impl fmt::Display for Card {
                 } else {
                     write!(f, "Reversed {numeral} - {name}")
                 }
-            },
+            }
             Arcana::Minor { rank, suit } => {
                 if Orientation::Upright == self.orientation {
                     write!(f, "{rank} of {suit}")
                 } else {
                     write!(f, "Reversed {rank} of {suit}")
                 }
-            },
+            }
         }
     }
 }
 
 impl Card {
-    pub fn new(arcana:Arcana) -> Card {
-        Card { arcana, orientation: Orientation::Upright }
+    pub fn new(arcana: Arcana) -> Card {
+        Card {
+            arcana,
+            orientation: Orientation::Upright,
+        }
     }
 
     pub fn reverse(&mut self) {
@@ -105,7 +133,10 @@ mod tests {
     #[test]
     fn reverse_card() {
         let mut card = Card {
-            arcana: Arcana::Major { order: 0, name: String::from("a")},
+            arcana: Arcana::Major {
+                order: 0,
+                name: String::from("a"),
+            },
             orientation: Orientation::Upright,
         };
 

@@ -1,6 +1,6 @@
 pub mod card;
-pub mod spread;
 pub mod deck;
+pub mod spread;
 
 extern crate strum;
 #[macro_use]

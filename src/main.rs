@@ -1,10 +1,10 @@
-use tarotrs::Instance;
-use Command::*;
 use std::fs;
 use std::fs::File;
 use std::io;
 use std::io::Write;
 use std::path::PathBuf;
+use tarotrs::Instance;
+use Command::*;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -36,7 +36,7 @@ fn save_instance(instance: &Instance) -> Result<(), ()> {
 
 enum Command {
     Help,
-    Pop {amount: usize},
+    Pop { amount: usize },
     Peek,
     Shuffle,
     Strip,
@@ -45,7 +45,7 @@ enum Command {
     Load,
     Reset,
     Quit,
-    Other
+    Other,
 }
 
 fn parse_command(text: &String) -> Command {
@@ -56,26 +56,84 @@ fn parse_command(text: &String) -> Command {
     }
 
     match words.first().unwrap().to_lowercase().as_str() {
-        "help" => if words.len() == 1 { Help } else { Other} ,
-        "pop" => if words.len() == 1 { Pop { amount: 1 } } else {
-            if words.len() > 2 {
-                return Other;
+        "help" => {
+            if words.len() == 1 {
+                Help
+            } else {
+                Other
             }
+        }
+        "pop" => {
+            if words.len() == 1 {
+                Pop { amount: 1 }
+            } else {
+                if words.len() > 2 {
+                    return Other;
+                }
 
-            match words.get(1).unwrap_or(&"1").parse::<usize>() {
-                Ok(0) => Other,
-                Ok(amount) => Pop{ amount },
-                _ => Other,
+                match words.get(1).unwrap_or(&"1").parse::<usize>() {
+                    Ok(0) => Other,
+                    Ok(amount) => Pop { amount },
+                    _ => Other,
+                }
             }
-        },
-        "peek" => if words.len() == 1 { Peek } else { Other },
-        "shuffle" => if words.len() == 1 { Shuffle } else { Other },
-        "strip" => if words.len() == 1 { Strip } else { Other },
-        "riffle" => if words.len() == 1 { Riffle } else { Other },
-        "save" => if words.len() == 1 { Save } else { Other },
-        "load" => if words.len() == 1 { Load } else { Other },
-        "reset" => if words.len() == 1 { Reset } else { Other },
-        "quit" | "exit" | "stop" => if words.len() == 1 { Quit } else { Other },
+        }
+        "peek" => {
+            if words.len() == 1 {
+                Peek
+            } else {
+                Other
+            }
+        }
+        "shuffle" => {
+            if words.len() == 1 {
+                Shuffle
+            } else {
+                Other
+            }
+        }
+        "strip" => {
+            if words.len() == 1 {
+                Strip
+            } else {
+                Other
+            }
+        }
+        "riffle" => {
+            if words.len() == 1 {
+                Riffle
+            } else {
+                Other
+            }
+        }
+        "save" => {
+            if words.len() == 1 {
+                Save
+            } else {
+                Other
+            }
+        }
+        "load" => {
+            if words.len() == 1 {
+                Load
+            } else {
+                Other
+            }
+        }
+        "reset" => {
+            if words.len() == 1 {
+                Reset
+            } else {
+                Other
+            }
+        }
+        "quit" | "exit" | "stop" => {
+            if words.len() == 1 {
+                Quit
+            } else {
+                Other
+            }
+        }
         _ => Other,
     }
 }
@@ -89,7 +147,9 @@ fn main() {
         print!("> ");
         io::stdout().flush().expect("Failed to flush stdout");
         input.clear();
-        io::stdin().read_line(&mut input).expect("Failed to read stdin");
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read stdin");
         let command = parse_command(&input);
 
         match command {
