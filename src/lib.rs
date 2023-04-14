@@ -29,3 +29,9 @@ impl Instance {
         toml::from_str(from)
     }
 }
+
+impl Default for Instance {
+    fn default() -> Self {
+        Self::new()
+    }
+}

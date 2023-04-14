@@ -9,8 +9,8 @@ use cursive::theme::Style;
 use cursive::views::{Dialog, DummyView, LinearLayout, SelectView, TextView};
 use cursive::Cursive;
 use tarotrs::deck::Deck;
-use tarotrs::Instance;
 use tarotrs::shuffle::*;
+use tarotrs::Instance;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -86,7 +86,11 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<In
         Peek => {
             let instance = instance.borrow_mut();
             let card = instance.deck.peek().unwrap();
-            show_popup(siv, "peek".to_owned(), format!("the top card is\nThe {card}"));
+            show_popup(
+                siv,
+                "peek".to_owned(),
+                format!("the top card is\nThe {card}"),
+            );
         }
         Shuffle => {
             siv.add_layer(
@@ -114,7 +118,11 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<In
         }
         Reset => {
             instance.borrow_mut().deck = Deck::default();
-            show_popup(siv, "reset".to_owned(), "the deck has been reset".to_owned());
+            show_popup(
+                siv,
+                "reset".to_owned(),
+                "the deck has been reset".to_owned(),
+            );
         }
         Quit => match save_instance(&instance.borrow_mut()) {
             Ok(_) => siv.quit(),
@@ -130,11 +138,7 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<In
 }
 
 fn show_popup(siv: &mut Cursive, title: String, text: String) {
-    siv.add_layer(
-        Dialog::text(text)
-            .title(title)
-            .button("OK", |siv| {
-                siv.pop_layer();
-            }),
-    );
+    siv.add_layer(Dialog::text(text).title(title).button("OK", |siv| {
+        siv.pop_layer();
+    }));
 }

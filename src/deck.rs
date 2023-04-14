@@ -21,7 +21,7 @@ impl Deck {
 
         cards.push_front(Card::new(Arcana::Major {
             order: 0,
-            name: MAJOR_ARCANA_NAMES.get(0).unwrap().to_string(),
+            name: MAJOR_ARCANA_NAMES.first().unwrap().to_string(),
         }));
 
         for suit in 0..Suit::COUNT {

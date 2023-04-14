@@ -78,7 +78,10 @@ impl Shuffle for StripShuffler {
 }
 
 mod tests {
-    use super::*;
+    #[allow(unused_imports)]
+    use crate::deck::Deck;
+    #[allow(unused_imports)]
+    use crate::shuffle::*;
 
     #[test]
     fn random_shuffle() {
