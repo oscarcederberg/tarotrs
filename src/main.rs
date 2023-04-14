@@ -55,7 +55,7 @@ fn main() {
     use Command::*;
 
     let mut siv = cursive::default();
-    let instance = Rc::new(RefCell::new(load_instance().unwrap_or(Instance::default())));
+    let instance = Rc::new(RefCell::new(load_instance().unwrap_or(Instance::new())));
     let action_select = SelectView::new()
         .item("pull top card", Pop)
         .item("peek top card", Peek)

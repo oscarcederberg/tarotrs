@@ -1,6 +1,31 @@
 use std::fmt;
 use std::fmt::Formatter;
 
+pub const MAJOR_ARCANA_NAMES: &[&str] = &[
+    "The Fool",
+    "The Magician",
+    "The High Priestess",
+    "The Empress",
+    "The Emperor",
+    "The Hierophant",
+    "The Lovers",
+    "The Chariot",
+    "Strength",
+    "The Hermit",
+    "The Wheel of Fortune",
+    "Justice",
+    "The Hanged Man",
+    "Death",
+    "Temperance",
+    "The Devil",
+    "The Tower",
+    "The Star",
+    "The Moon",
+    "The Sun",
+    "Judgement",
+    "The World",
+];
+
 #[derive(PartialEq, Eq, Debug, Serialize, Deserialize, EnumCount, FromRepr)]
 pub enum Rank {
     Ace = 1,
@@ -86,8 +111,11 @@ impl fmt::Display for Card {
 }
 
 impl Card {
-    pub fn new(arcana:Arcana) -> Card {
-        Card { arcana, orientation: Orientation::Upright }
+    pub fn new(arcana: Arcana) -> Card {
+        Card {
+            arcana,
+            orientation: Orientation::Upright,
+        }
     }
 
     pub fn reverse(&mut self) {
