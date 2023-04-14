@@ -103,7 +103,7 @@ impl Deck {
         ]);
 
         for suit in 0..Suit::COUNT {
-            for rank in (1..=Suit::COUNT).rev() {
+            for rank in (1..=Rank::COUNT).rev() {
                 cards.push_back(Card::new(Arcana::Minor {
                     rank: Rank::from_repr(rank).unwrap(),
                     suit: Suit::from_repr(suit).unwrap(),
@@ -142,10 +142,16 @@ impl Deck {
     }
 
     pub fn strip_shuffle(&mut self) {
+        if self.cards.len() == 0 {
+            return;
+        }
+
         let mut rng = rand::thread_rng();
-        let cut = rng.gen_range(0..self.cards.len());
-        let cards = self.cards.split_off(cut);
-        let insertion = rng.gen_range(0..self.cards.len());
+        let size = self.cards.len();
+        let cut = rng.gen_range(0..(self.cards.len() / 2));
+        let cards = self.cards.split_off(self.cards.len() - cut);
+        let size = self.cards.len();
+        let insertion = rng.gen_range(0..=self.cards.len());
 
         for card in cards.into_iter().rev() {
             self.cards.insert(insertion, card);
@@ -153,6 +159,10 @@ impl Deck {
     }
 
     pub fn riffle_shuffle(&mut self) {
+        if self.cards.len() == 0 {
+            return;
+        }
+
         let mut rng = rand::thread_rng();
         let size: usize = self.cards.len();
         let cut: usize = rng.gen_range(0..size);
