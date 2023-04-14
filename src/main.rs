@@ -10,6 +10,7 @@ use cursive::views::{Dialog, DummyView, LinearLayout, SelectView, TextView};
 use cursive::Cursive;
 use tarotrs::deck::Deck;
 use tarotrs::Instance;
+use tarotrs::shuffle::*;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -94,17 +95,17 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<In
                     .button("random", {
                         let instance = instance.clone();
                         move |_siv| {
-                            instance.borrow_mut().deck.random_shuffle();
+                            RandomShuffler::shuffle(&mut instance.borrow_mut().deck);
                         }
                     })
                     .button("strip", {
                         let instance = instance.clone();
                         move |_siv| {
-                            instance.borrow_mut().deck.strip_shuffle();
+                            StripShuffler::shuffle(&mut instance.borrow_mut().deck);
                         }
                     })
                     .button("riffle", move |_siv| {
-                        instance.borrow_mut().deck.riffle_shuffle();
+                        RiffleShuffler::shuffle(&mut instance.borrow_mut().deck);
                     })
                     .button("done", |siv| {
                         siv.pop_layer();

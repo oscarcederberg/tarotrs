@@ -1,5 +1,6 @@
 pub mod card;
 pub mod deck;
+pub mod shuffle;
 pub mod spread;
 
 extern crate strum;

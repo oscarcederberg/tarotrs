@@ -1,10 +1,9 @@
 use crate::card::*;
-use rand::Rng;
 use std::collections::vec_deque::VecDeque;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Deck {
-    cards: VecDeque<Card>,
+    pub cards: VecDeque<Card>,
 }
 
 impl Deck {
@@ -47,61 +46,6 @@ impl Deck {
 
     pub fn put(&mut self, card: Card) {
         self.cards.push_back(card);
-    }
-
-    pub fn random_shuffle(&mut self) {
-        use rand::seq::SliceRandom;
-        let mut rng = rand::thread_rng();
-
-        self.cards.make_contiguous().shuffle(&mut rng);
-        self.cards.iter_mut().for_each(|card| {
-            if rng.gen_bool(0.5) {
-                card.reverse();
-            }
-        })
-    }
-
-    pub fn strip_shuffle(&mut self) {
-        if self.cards.is_empty() {
-            return;
-        }
-
-        let mut rng = rand::thread_rng();
-        let cut = rng.gen_range(0..(self.cards.len() / 2));
-        let cards = self.cards.split_off(self.cards.len() - cut);
-        let insertion = rng.gen_range(0..=self.cards.len());
-
-        for card in cards.into_iter().rev() {
-            self.cards.insert(insertion, card);
-        }
-    }
-
-    pub fn riffle_shuffle(&mut self) {
-        if self.cards.is_empty() {
-            return;
-        }
-
-        let mut rng = rand::thread_rng();
-        let size: usize = self.cards.len();
-        let cut: usize = rng.gen_range(0..size);
-
-        let mut left = self.cards.split_off(cut);
-        let mut right = VecDeque::with_capacity(size);
-        std::mem::swap(&mut right, &mut self.cards);
-
-        if rng.gen_bool(0.5) {
-            left.iter_mut().for_each(|card| card.reverse());
-        }
-
-        if rng.gen_bool(0.5) {
-            right.iter_mut().for_each(|card| card.reverse());
-        }
-
-        if rng.gen_bool(0.5) {
-            self.cards = itertools::interleave(right, left).collect();
-        } else {
-            self.cards = itertools::interleave(left, right).collect();
-        }
     }
 }
 
@@ -193,30 +137,6 @@ mod tests {
             })
         );
 
-        assert_eq!(deck.cards.len(), size);
-    }
-
-    #[test]
-    fn random_shuffle() {
-        let mut deck = Deck::new();
-        let size = deck.cards.len();
-        deck.random_shuffle();
-        assert_eq!(deck.cards.len(), size);
-    }
-
-    #[test]
-    fn strip_shuffle() {
-        let mut deck = Deck::new();
-        let size = deck.cards.len();
-        deck.strip_shuffle();
-        assert_eq!(deck.cards.len(), size);
-    }
-
-    #[test]
-    fn riffle_shuffle() {
-        let mut deck = Deck::new();
-        let size = deck.cards.len();
-        deck.riffle_shuffle();
         assert_eq!(deck.cards.len(), size);
     }
 }
