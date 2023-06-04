@@ -8,33 +8,69 @@ use std::rc::Rc;
 use cursive::theme::Style;
 use cursive::views::{Dialog, DummyView, LinearLayout, SelectView, TextView};
 use cursive::Cursive;
+use strum_macros::Display;
 use tarotrs::deck::Deck;
 use tarotrs::shuffle::*;
 use tarotrs::Instance;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-fn load_instance() -> Result<Instance, toml::de::Error> {
-    let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/"));
-    file_path.push("tarotrs/instance.toml");
-    match fs::read_to_string(file_path) {
-        Ok(contents) => Instance::deserialize(contents.as_str()),
-        Err(_) => panic!("couldn't load instance"),
+#[derive(Debug, Display)]
+enum LoadInstanceError {
+    FileReadError(std::io::Error),
+    DeserializeError(toml::de::Error),
+}
+
+#[derive(Debug, Display)]
+enum SaveInstanceError {
+    FileWriteError(std::io::Error),
+    SerializeError(toml::ser::Error),
+}
+
+impl std::error::Error for LoadInstanceError {}
+impl std::error::Error for SaveInstanceError {}
+
+impl From<std::io::Error> for LoadInstanceError {
+    fn from(err: std::io::Error) -> Self {
+        LoadInstanceError::FileReadError(err)
     }
 }
 
-fn save_instance(instance: &Instance) -> Result<(), toml::ser::Error> {
+impl From<toml::de::Error> for LoadInstanceError {
+    fn from(err: toml::de::Error) -> Self {
+        LoadInstanceError::DeserializeError(err)
+    }
+}
+
+impl From<std::io::Error> for SaveInstanceError {
+    fn from(err: std::io::Error) -> Self {
+        SaveInstanceError::FileWriteError(err)
+    }
+}
+
+impl From<toml::ser::Error> for SaveInstanceError {
+    fn from(err: toml::ser::Error) -> Self {
+        SaveInstanceError::SerializeError(err)
+    }
+}
+
+fn load_instance() -> Result<Instance, LoadInstanceError> {
+    let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/"));
+    file_path.push("tarotrs/instance.toml");
+    let contents = fs::read_to_string(file_path)?;
+    Ok(Instance::deserialize(contents.as_str())?)
+}
+
+fn save_instance(instance: &Instance) -> Result<(), SaveInstanceError> {
     let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/"));
     file_path.push("tarotrs/");
-    fs::create_dir_all(&file_path).unwrap();
+    fs::create_dir_all(&file_path)?;
     file_path.push("instance.toml");
 
     let serialized = instance.serialize()?;
 
-    let mut file = File::create(file_path.as_path()).expect("couldn't create file");
-    file.write_all(serialized.as_bytes())
-        .expect("couldn't wrie to file");
-    Ok(())
+    let mut file = File::create(file_path.as_path())?;
+    Ok(file.write_all(serialized.as_bytes())?)
 }
 
 #[allow(dead_code)]
