@@ -103,7 +103,7 @@ fn main() {
                 .child(DummyView)
                 .child(action_select),
         )
-        .title(format!("tarotrs {VERSION}")),
+        .title(format!("tarotrs tui {VERSION}")),
     );
 
     siv.run();

@@ -2,8 +2,13 @@
 name = "tarotrs"
 version = "0.1.0"
 edition = "2021"
+default-run = "tui"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "tui"
+path = "src/tui.rs"
 
 [dependencies]
 cursive = "0.20.0"
