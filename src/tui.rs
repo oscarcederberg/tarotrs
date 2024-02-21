@@ -8,50 +8,29 @@ use std::rc::Rc;
 use cursive::theme::Style;
 use cursive::views::{Dialog, DummyView, LinearLayout, SelectView, TextView};
 use cursive::Cursive;
-use strum_macros::Display;
 use tarotrs::deck::Deck;
 use tarotrs::shuffle::*;
 use tarotrs::TarotInstance;
+use thiserror::Error;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-#[derive(Debug, Display)]
+#[derive(Debug, Error)]
 enum LoadInstanceError {
-    FileReadError(std::io::Error),
-    DeserializeError(toml::de::Error),
+    #[error("File read error")]
+    FileReadError(#[from] std::io::Error),
+
+    #[error("Deserialize error")]
+    DeserializeError(#[from] toml::de::Error),
 }
 
-#[derive(Debug, Display)]
+#[derive(Debug, Error)]
 enum SaveInstanceError {
-    FileWriteError(std::io::Error),
-    SerializeError(toml::ser::Error),
-}
+    #[error("File write error")]
+    FileWriteError(#[from] std::io::Error),
 
-impl std::error::Error for LoadInstanceError {}
-impl std::error::Error for SaveInstanceError {}
-
-impl From<std::io::Error> for LoadInstanceError {
-    fn from(err: std::io::Error) -> Self {
-        LoadInstanceError::FileReadError(err)
-    }
-}
-
-impl From<toml::de::Error> for LoadInstanceError {
-    fn from(err: toml::de::Error) -> Self {
-        LoadInstanceError::DeserializeError(err)
-    }
-}
-
-impl From<std::io::Error> for SaveInstanceError {
-    fn from(err: std::io::Error) -> Self {
-        SaveInstanceError::FileWriteError(err)
-    }
-}
-
-impl From<toml::ser::Error> for SaveInstanceError {
-    fn from(err: toml::ser::Error) -> Self {
-        SaveInstanceError::SerializeError(err)
-    }
+    #[error("Serialize error")]
+    SerializeError(#[from] toml::ser::Error),
 }
 
 fn load_tarot_instance() -> Result<TarotInstance, LoadInstanceError> {
@@ -87,7 +66,7 @@ fn main() {
     use Command::*;
 
     let mut siv = cursive::default();
-    let instance = Rc::new(RefCell::new(load_tarot_instance().unwrap_or(TarotInstance::new())));
+    let instance = Rc::new(RefCell::new(load_tarot_instance().unwrap_or_default()));
     let action_select = SelectView::new()
         .item("draw top card", DrawCard)
         .item("peek top card", PeekCard)
