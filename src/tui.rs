@@ -76,11 +76,11 @@ fn save_tarot_instance(instance: &TarotInstance) -> Result<(), SaveInstanceError
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
 enum Command {
-    Draw,
-    Peek,
-    Shuffle,
-    Reset,
-    Quit,
+    DrawCard,
+    PeekCard,
+    ShuffleDeck,
+    ResetDeck,
+    SaveAndQuit,
 }
 
 fn main() {
@@ -89,11 +89,11 @@ fn main() {
     let mut siv = cursive::default();
     let instance = Rc::new(RefCell::new(load_tarot_instance().unwrap_or(TarotInstance::new())));
     let action_select = SelectView::new()
-        .item("draw top card", Draw)
-        .item("peek top card", Peek)
-        .item("shuffle the deck", Shuffle)
-        .item("reset the deck", Reset)
-        .item("quit", Quit)
+        .item("draw top card", DrawCard)
+        .item("peek top card", PeekCard)
+        .item("shuffle the deck", ShuffleDeck)
+        .item("reset the deck", ResetDeck)
+        .item("save and quit", SaveAndQuit)
         .on_submit(move |siv, selected| perform_action(siv, selected, Rc::clone(&instance)));
 
     siv.add_layer(
@@ -113,13 +113,13 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<Ta
     use Command::*;
 
     match selected {
-        Draw => {
+        DrawCard => {
             let mut instance = instance.borrow_mut();
             let card = instance.deck.draw().unwrap();
             show_popup(siv, "draw".to_owned(), format!("you drew\nThe {card}"));
             instance.deck.put(card);
         }
-        Peek => {
+        PeekCard => {
             let instance = instance.borrow_mut();
             let card = instance.deck.peek().unwrap();
             show_popup(
@@ -128,7 +128,7 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<Ta
                 format!("the top card is\nThe {card}"),
             );
         }
-        Shuffle => {
+        ShuffleDeck => {
             siv.add_layer(
                 Dialog::text("shuffle the deck")
                     .title("shuffle")
@@ -152,7 +152,7 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<Ta
                     }),
             );
         }
-        Reset => {
+        ResetDeck => {
             instance.borrow_mut().deck = Deck::default();
             show_popup(
                 siv,
@@ -160,7 +160,7 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<Ta
                 "the deck has been reset".to_owned(),
             );
         }
-        Quit => match save_tarot_instance(&instance.borrow_mut()) {
+        SaveAndQuit => match save_tarot_instance(&instance.borrow_mut()) {
             Ok(_) => siv.quit(),
             Err(_) => {
                 siv.add_layer(
