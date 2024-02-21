@@ -13,10 +13,10 @@ path = "src/tui.rs"
 [dependencies]
 cursive = "0.20.0"
 dirs = "5.0.0"
-itertools = "0.10.5"
+itertools = "0.12.1"
 rand = "0.8.5"
 roman = "0.1.6"
-serde = { version = "1.0.152", features = ["derive"] }
-strum = "0.24.1"
-strum_macros = "0.24.3"
-toml = "0.7.2"
+serde = { version = "1.0.197", features = ["derive"] }
+strum = "0.26.1"
+strum_macros = "0.26.1"
+toml = "0.8.1"
