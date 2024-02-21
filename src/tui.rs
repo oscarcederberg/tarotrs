@@ -11,7 +11,7 @@ use cursive::Cursive;
 use strum_macros::Display;
 use tarotrs::deck::Deck;
 use tarotrs::shuffle::*;
-use tarotrs::Instance;
+use tarotrs::TarotInstance;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -54,14 +54,14 @@ impl From<toml::ser::Error> for SaveInstanceError {
     }
 }
 
-fn load_instance() -> Result<Instance, LoadInstanceError> {
+fn load_tarot_instance() -> Result<TarotInstance, LoadInstanceError> {
     let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/"));
     file_path.push("tarotrs/instance.toml");
     let contents = fs::read_to_string(file_path)?;
-    Ok(Instance::deserialize(contents.as_str())?)
+    Ok(TarotInstance::deserialize(contents.as_str())?)
 }
 
-fn save_instance(instance: &Instance) -> Result<(), SaveInstanceError> {
+fn save_tarot_instance(instance: &TarotInstance) -> Result<(), SaveInstanceError> {
     let mut file_path = dirs::cache_dir().unwrap_or(PathBuf::from("~/.cache/"));
     file_path.push("tarotrs/");
     fs::create_dir_all(&file_path)?;
@@ -87,7 +87,7 @@ fn main() {
     use Command::*;
 
     let mut siv = cursive::default();
-    let instance = Rc::new(RefCell::new(load_instance().unwrap_or(Instance::new())));
+    let instance = Rc::new(RefCell::new(load_tarot_instance().unwrap_or(TarotInstance::new())));
     let action_select = SelectView::new()
         .item("draw top card", Draw)
         .item("peek top card", Peek)
@@ -109,7 +109,7 @@ fn main() {
     siv.run();
 }
 
-fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<Instance>>) {
+fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<TarotInstance>>) {
     use Command::*;
 
     match selected {
@@ -160,7 +160,7 @@ fn perform_action(siv: &mut Cursive, selected: &Command, instance: Rc<RefCell<In
                 "the deck has been reset".to_owned(),
             );
         }
-        Quit => match save_instance(&instance.borrow_mut()) {
+        Quit => match save_tarot_instance(&instance.borrow_mut()) {
             Ok(_) => siv.quit(),
             Err(_) => {
                 siv.add_layer(

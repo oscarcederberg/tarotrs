@@ -12,25 +12,25 @@ extern crate serde;
 use crate::deck::Deck;
 
 #[derive(Serialize, Deserialize)]
-pub struct Instance {
+pub struct TarotInstance {
     pub deck: Deck,
 }
 
-impl Instance {
-    pub fn new() -> Instance {
-        Instance { deck: Deck::new() }
+impl TarotInstance {
+    pub fn new() -> TarotInstance {
+        TarotInstance { deck: Deck::new() }
     }
 
     pub fn serialize(&self) -> Result<String, toml::ser::Error> {
         toml::to_string(self)
     }
 
-    pub fn deserialize(from: &str) -> Result<Instance, toml::de::Error> {
+    pub fn deserialize(from: &str) -> Result<TarotInstance, toml::de::Error> {
         toml::from_str(from)
     }
 }
 
-impl Default for Instance {
+impl Default for TarotInstance {
     fn default() -> Self {
         Self::new()
     }
